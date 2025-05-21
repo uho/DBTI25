@@ -1,18 +1,31 @@
-# Start from a base Debian or Ubuntu image since they typically have easy access to Gforth via package managers.
-FROM debian:bullseye-slim
+# Basis-Image: Ubuntu mit Java & Maven
+FROM maven:3.9.6-eclipse-temurin-21
 
-# Avoid prompts from apt.
+# Locale & System-Updates
 ENV DEBIAN_FRONTEND=noninteractive
-
-# This sets up a basic environment and installs Gforth.
 RUN apt-get update && apt-get install -y \
-    git \
-    erlang erlang-examples erlang-doc erlang-manpages \
-    # You can include other necessary tools here, depending on your development needs.
-    && apt-get autoremove -y \
-    && apt-get clean -y \
+    mariadb-server \
     && rm -rf /var/lib/apt/lists/*
 
-# Set the default shell to bash instead of sh
-ENV SHELL /bin/bash
+# MariaDB konfigurieren
+RUN service mysql start && \
+    mysql -u root -e "ALTER USER 'root'@'localhost' IDENTIFIED BY 'password'; FLUSH PRIVILEGES;" && \
+    sed -i 's/^bind-address.*/bind-address = 0.0.0.0/' /etc/mysql/mariadb.conf.d/50-server.cnf
+
+# SQL-Datei kopieren
+COPY firma.sql /tmp/firma.sql
+
+# MariaDB initialisieren & SQL-Skript einspielen
+RUN service mysql start && \
+    sleep 5 && \
+    mysql -u root -e "ALTER USER 'root'@'localhost' IDENTIFIED BY 'password'; FLUSH PRIVILEGES;" && \
+    mysql -u root < /tmp/firma.sql
+
+
+# MariaDB beim Containerstart automatisch starten
+COPY entrypoint.sh /entrypoint.sh
+RUN chmod +x /entrypoint.sh
+
+EXPOSE 3306
+ENTRYPOINT ["/entrypoint.sh"]
 
