@@ -4,7 +4,7 @@
         "dockerfile": "Dockerfile"
     },
     "forwardPorts": [3306],
-    "postCreateCommand": "echo 'Codespace bereit!'",
+    "postCreateCommand": "bash /usr/local/bin/startup.sh",
     "remoteUser": "root",
 
     "customizations": {
