@@ -23,9 +23,8 @@ RUN service mariadb start && \
 
 
 # MariaDB beim Containerstart automatisch starten
-COPY entrypoint.sh /entrypoint.sh
-RUN chmod +x /entrypoint.sh
+COPY startup.sh /usr/local/bin/startup.sh
 
 EXPOSE 3306
-ENTRYPOINT ["mariadbd-safe"]
+# ENTRYPOINT ["mariadbd-safe"]
 
