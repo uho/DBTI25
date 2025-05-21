@@ -2,7 +2,7 @@
 # Startet den MariaDB-Dienst und eine Bash-Shell
 
 # Starte MariaDB
-service mysql start
+service mariadb start
 
 # Halte den Container offen
 exec bash
