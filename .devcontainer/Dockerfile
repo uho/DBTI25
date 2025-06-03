@@ -18,9 +18,8 @@ COPY firma.sql /tmp/firma.sql
 # MariaDB initialisieren & SQL-Skript einspielen
 RUN service mariadb start && \
     sleep 5 && \
-    mysql -u root < /tmp/firma.sql
-#    mysql -u root -e "ALTER USER 'root'@'localhost' IDENTIFIED BY 'password'; FLUSH PRIVILEGES;" && \
-
+    mysql -u root < /tmp/firma.sql && \
+    mysql -u root -e "ALTER USER 'root'@'localhost' IDENTIFIED BY 'password'; FLUSH PRIVILEGES;"
 
 # MariaDB beim Containerstart automatisch starten
 COPY startup.sh /usr/local/bin/startup.sh
